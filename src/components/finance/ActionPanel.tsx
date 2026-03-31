@@ -11,7 +11,7 @@ const ActionPanel = () => {
   const [activeTab, setActiveTab] = useState("Nota");
 
   return (
-    <div className="w-80 shrink-0 glass-panel rounded-3xl border border-border p-5 flex flex-col gap-5">
+    <div className="flex-1 glass-panel rounded-3xl p-5 flex flex-col gap-5">
       <h2 className="text-sm font-bold text-foreground">Novo Registro</h2>
 
       {/* Tabs */}
@@ -22,11 +22,10 @@ const ActionPanel = () => {
             <button
               key={tab.label}
               onClick={() => setActiveTab(tab.label)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition ${
-                isActive
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition ${isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <tab.icon size={14} />
               {tab.label}

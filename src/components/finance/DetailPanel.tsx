@@ -8,16 +8,16 @@ interface DetailPanelProps {
 const DetailPanel = ({ item }: DetailPanelProps) => {
   if (!item) {
     return (
-      <div className="flex-1 bg-card rounded-3xl border border-border flex items-center justify-center">
+      <div className="flex-1 bg-card rounded-3xl flex items-center justify-center">
         <p className="text-muted-foreground text-sm">Selecione um item para visualizar</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 bg-card rounded-3xl border border-border flex flex-col overflow-hidden">
+    <div className="flex-1 bg-card rounded-3xl flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-border">
+      <div className="p-6">
         <div className="flex items-start justify-between mb-3">
           <h1 className="text-xl font-bold text-foreground">{item.title}</h1>
           <button className="p-2 rounded-xl hover:bg-secondary transition text-muted-foreground">
@@ -76,7 +76,7 @@ const DetailPanel = ({ item }: DetailPanelProps) => {
       </div>
 
       {/* Reply bar */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4">
         <div className="flex items-center gap-2 bg-surface-input rounded-2xl px-4 py-3">
           <button className="text-muted-foreground hover:text-foreground transition">
             <Paperclip size={16} />

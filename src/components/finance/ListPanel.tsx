@@ -66,7 +66,7 @@ interface ListPanelProps {
 
 const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
   return (
-    <div className="w-80 shrink-0 bg-card rounded-3xl p-5 flex flex-col gap-4 border border-border overflow-hidden">
+    <div className="w-80 shrink-0 bg-card rounded-3xl p-5 flex flex-col gap-4 overflow-hidden">
       {/* Search */}
       <div className="relative">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -82,11 +82,10 @@ const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
         {filters.map((f, i) => (
           <button
             key={f}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-              i === 0
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-muted-foreground hover:text-foreground"
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${i === 0
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-muted-foreground hover:text-foreground"
+              }`}
           >
             {f}
           </button>
@@ -101,17 +100,15 @@ const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
             <button
               key={item.id}
               onClick={() => onSelect(item.id)}
-              className={`text-left p-4 rounded-2xl transition-all ${
-                isActive
-                  ? "gradient-active shadow-lg shadow-purple-500/20 scale-[1.02]"
-                  : "bg-surface-elevated hover:bg-secondary"
-              }`}
+              className={`text-left p-4 rounded-2xl transition-all ${isActive
+                ? "gradient-active shadow-lg shadow-purple-500/20 scale-[1.02]"
+                : "bg-surface-elevated hover:bg-secondary"
+                }`}
             >
               <div className="flex items-start justify-between mb-1.5">
                 <h3
-                  className={`text-sm font-semibold leading-tight ${
-                    isActive ? "text-foreground" : "text-secondary-foreground"
-                  }`}
+                  className={`text-sm font-semibold leading-tight ${isActive ? "text-foreground" : "text-secondary-foreground"
+                    }`}
                 >
                   {item.title}
                 </h3>
@@ -120,29 +117,26 @@ const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
                 </span>
               </div>
               <p
-                className={`text-xs leading-relaxed mb-2 ${
-                  isActive ? "text-foreground/80" : "text-muted-foreground"
-                }`}
+                className={`text-xs leading-relaxed mb-2 ${isActive ? "text-foreground/80" : "text-muted-foreground"
+                  }`}
               >
                 {item.summary}
               </p>
               <div className="flex items-center justify-between">
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    isActive
-                      ? "bg-tag-warning text-tag-warning-foreground"
-                      : item.tagType === "warning"
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isActive
+                    ? "bg-tag-warning text-tag-warning-foreground"
+                    : item.tagType === "warning"
                       ? "bg-tag-warning/20 text-tag-warning"
                       : "bg-primary/20 text-primary"
-                  }`}
+                    }`}
                 >
                   {item.tag}
                 </span>
                 {item.amount && (
                   <span
-                    className={`text-xs font-semibold ${
-                      isActive ? "text-foreground" : "text-secondary-foreground"
-                    }`}
+                    className={`text-xs font-semibold ${isActive ? "text-foreground" : "text-secondary-foreground"
+                      }`}
                   >
                     {item.amount}
                   </span>
