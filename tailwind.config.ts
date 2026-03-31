@@ -56,6 +56,8 @@ export default {
           warning: "hsl(var(--tag-warning))",
           "warning-foreground": "hsl(var(--tag-warning-foreground))",
         },
+        success: "hsl(var(--success))",
+        danger: "hsl(var(--danger))",
         sidebar: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--foreground))",

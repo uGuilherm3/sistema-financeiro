@@ -81,11 +81,11 @@ const SidebarPanel = ({ activeNav, onNavChange }: SidebarPanelProps) => {
         <div className="flex gap-4 mt-3">
           <div>
             <p className="text-xs text-muted-foreground">Receitas</p>
-            <p className="text-sm font-medium text-green-400">+ R$ 8.500</p>
+            <p className="text-sm font-medium text-success">+ R$ 8.500</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Despesas</p>
-            <p className="text-sm font-medium text-red-400">- R$ 4.250</p>
+            <p className="text-sm font-medium text-danger">- R$ 4.250</p>
           </div>
         </div>
       </div>
