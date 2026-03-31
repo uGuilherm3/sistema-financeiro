@@ -32,6 +32,8 @@
     --gradient-active: linear-gradient(135deg, hsl(25, 95%, 55%), hsl(280, 80%, 55%), hsl(235, 75%, 55%));
     --tag-warning: 45 100% 55%;
     --tag-warning-foreground: 0 0% 10%;
+    --success: 142 70% 50%;
+    --danger: 0 80% 60%;
   }
 }
 
