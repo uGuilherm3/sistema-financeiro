@@ -3,9 +3,10 @@ import type { ListItem } from "./ListPanel";
 
 interface DetailPanelProps {
   item: ListItem | undefined;
+  onEditClick?: (item: ListItem) => void;
 }
 
-const DetailPanel = ({ item }: DetailPanelProps) => {
+const DetailPanel = ({ item, onEditClick }: DetailPanelProps) => {
   if (!item) {
     return (
       <div className="flex-1 bg-card rounded-3xl flex items-center justify-center">
@@ -20,7 +21,10 @@ const DetailPanel = ({ item }: DetailPanelProps) => {
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
           <h1 className="text-xl font-bold text-foreground">{item.title}</h1>
-          <button className="p-2 rounded-xl hover:bg-secondary transition text-muted-foreground">
+          <button 
+            onClick={() => item && onEditClick?.(item)}
+            className="p-2 rounded-xl hover:bg-secondary transition text-muted-foreground hover:text-white"
+          >
             <MoreHorizontal size={18} />
           </button>
         </div>

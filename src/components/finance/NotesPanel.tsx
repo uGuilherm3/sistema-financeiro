@@ -1,50 +1,33 @@
-import { MoreHorizontal, Plus, StickyNote, Trash2, Calendar } from "lucide-react";
-import { useState } from "react";
+import { Plus, Trash2, Search } from "lucide-react";
+import type { ListItem } from "./ListPanel";
 
-interface Note {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-  tag: string;
+interface NotesPanelProps {
+    items: ListItem[];
+    onCreateClick?: () => void;
 }
 
-const NotesPanel = () => {
-    const [notes, setNotes] = useState<Note[]>([
-        { 
-            id: 1, 
-            title: "Revisão Financeira", 
-            content: "Revisar relatório de gastos mensais na segunda com a equipe de contabilidade.", 
-            date: "Hoje",
-            tag: "#FINANÇAS"
-        },
-        { 
-            id: 2, 
-            title: "Ração do Gato", 
-            content: "Comprar ração para o gato (Urgente). Verificar estoque de areia também.", 
-            date: "28 Mar",
-            tag: "#URGENTE"
-        },
-        { 
-            id: 3, 
-            title: "Projeto Cripto", 
-            content: "Ideia: Dashboard de investimentos em cripto integrado com APIs de corretoras.", 
-            date: "25 Mar",
-            tag: "#IDEIA"
-        },
-    ]);
+const NotesPanel = ({ items, onCreateClick }: NotesPanelProps) => {
+    const notes = items.filter(i => i.tag === "#NOTA" || i.tag.includes("NOTA"));
 
     return (
         <div className="w-80 h-full bg-card rounded-3xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-right-4 duration-500">
-            {/* Header - Identical to DetailPanel */}
-            <div className="p-6 pb-2">
-                <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                        <StickyNote size={20} className="text-muted-foreground" />
-                        <h1 className="text-xl font-bold text-foreground">Anotações</h1>
+            {/* Search & Add - Identical to ListPanel */}
+            <div className="p-5 pb-2">
+                <div className="flex gap-2 mb-4">
+                    <div className="relative flex-1">
+                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Buscar anotações..."
+                            className="w-full bg-surface-input rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border-none focus:ring-1 focus:ring-primary/50 transition"
+                        />
                     </div>
-                    <button className="p-2 rounded-xl hover:bg-white/5 transition-all text-muted-foreground">
-                        <Plus size={18} />
+                    <button
+                        onClick={onCreateClick}
+                        className="w-10 h-10 bg-white/5 text-muted-foreground rounded-xl flex items-center justify-center hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shrink-0"
+                        title="Criar anotação"
+                    >
+                        <Plus size={18} strokeWidth={2.5} />
                     </button>
                 </div>
             </div>
@@ -66,7 +49,7 @@ const NotesPanel = () => {
                         </div>
                         
                         <p className="text-xs text-muted-foreground leading-relaxed mb-3 line-clamp-3">
-                            {note.content}
+                            {note.summary}
                         </p>
                         
                         <div className="flex items-center justify-between">
@@ -79,14 +62,14 @@ const NotesPanel = () => {
                         </div>
                     </div>
                 ))}
+                {notes.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-40 text-muted-foreground/30">
+                        <Plus size={40} className="mb-2 opacity-10" />
+                        <p className="text-xs uppercase tracking-widest font-bold">Sem notas</p>
+                    </div>
+                )}
             </div>
 
-            {/* Bottom Input Area (Simplified) */}
-            <div className="p-4 border-t border-white/5">
-                <button className="w-full py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-all border border-dashed border-white/10">
-                    Nova Anotação
-                </button>
-            </div>
         </div>
     );
 };

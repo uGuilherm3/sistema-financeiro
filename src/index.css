@@ -29,7 +29,11 @@
 
     --surface-elevated: 0 0% 11%;
     --surface-input: 0 0% 15%;
-    --gradient-active: linear-gradient(135deg, hsl(25, 95%, 55%), hsl(280, 80%, 55%), hsl(235, 75%, 55%));
+    --gradient-active: radial-gradient(circle at 10% 0%, #FF8C00 0%, transparent 60%),
+                       radial-gradient(circle at 50% 50%, hsl(270 70% 50%) 0%, transparent 80%),
+                       radial-gradient(circle at 100% 100%, #3B1C4D 0%, transparent 60%),
+                       radial-gradient(circle at 100% 0%, #000000 0%, transparent 50%),
+                       #1A0B2E;
     --tag-warning: 45 100% 55%;
     --tag-warning-foreground: 0 0% 10%;
     --success: 142 70% 50%;
@@ -45,6 +49,39 @@
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
   }
+
+  /* Premium Scrollbar - 100% Static */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.075) !important;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.075) !important;
+  }
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.03) transparent;
+  }
+}
+
+/* Hide Spin Buttons from Number Inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 @layer utilities {
@@ -55,16 +92,6 @@
     background: hsla(0, 0%, 11%, 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 25%);
-    border-radius: 4px;
   }
 
   @keyframes music-bar {

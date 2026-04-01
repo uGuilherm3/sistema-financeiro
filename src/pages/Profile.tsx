@@ -23,6 +23,7 @@ const Profile = () => {
 
     // Profile State
     const [name, setName] = useState("");
+    const [salary, setSalary] = useState("0");
     const [email, setEmail] = useState("");
     const [photo, setPhoto] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -30,6 +31,7 @@ const Profile = () => {
     useEffect(() => {
         if (profile) {
             setName(profile.full_name || "");
+            setSalary(profile.salary_monthly?.toString() || "0");
             setPhoto(profile.avatar_url || null);
         }
         if (user) {
@@ -84,6 +86,7 @@ const Profile = () => {
                 .upsert({
                     id: user.id,
                     full_name: name,
+                    salary_monthly: parseFloat(salary) || 0,
                     avatar_url: photo,
                     updated_at: new Date().toISOString(),
                 });
@@ -216,6 +219,22 @@ const Profile = () => {
                             <div className="space-y-2 text-left opacity-50">
                                 <Label className="text-[10px] uppercase tracking-widest text-muted-foreground ml-1">E-mail (Autenticado)</Label>
                                 <Input value={email} disabled className="bg-white/[0.01] border-white/5 h-11 text-white cursor-not-allowed" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="space-y-2 text-left">
+                                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground ml-1">Salário Mensal (R$)</Label>
+                                <Input 
+                                    type="number" 
+                                    value={salary} 
+                                    onChange={(e) => setSalary(e.target.value)} 
+                                    placeholder="Ex: 5000"
+                                    className="bg-white/[0.03] border-white/10 h-11 text-white" 
+                                />
+                                <p className="text-[10px] text-muted-foreground mt-1 ml-1 uppercase tracking-tighter opacity-70">
+                                    Este valor define seu saldo base no Dashboard
+                                </p>
                             </div>
                         </div>
 

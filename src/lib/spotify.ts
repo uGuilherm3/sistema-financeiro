@@ -82,7 +82,12 @@ export const fetchCurrentlyPlaying = async (accessToken: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
-  if (response.status === 204 || response.status > 400) return null;
+  if (response.status === 204) return null;
+  if (!response.ok) {
+    const error = new Error('Failed to fetch currently playing');
+    (error as any).status = response.status;
+    throw error;
+  }
   return await response.json();
 };
 

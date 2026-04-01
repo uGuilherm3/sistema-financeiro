@@ -46,20 +46,29 @@ export const useSpotify = () => {
         if (!accessToken) return;
         try {
             const data = await fetchCurrentlyPlaying(accessToken);
-            if (data === null) {
-                setPlayback(null);
-            } else {
-                setPlayback(data);
-            }
+            setPlayback(data);
         } catch (err: any) {
             if (err.status === 401) {
+                console.log('Spotify token expired, refreshing...');
                 const newToken = await refresh();
                 if (newToken) {
-                    const data = await fetchCurrentlyPlaying(newToken);
-                    setPlayback(data);
+                    try {
+                        const data = await fetchCurrentlyPlaying(newToken);
+                        setPlayback(data);
+                    } catch (retryErr) {
+                        console.error('Fetch playback failed after refresh', retryErr);
+                        setPlayback(null);
+                    }
                 }
             } else {
                 console.error('Fetch playback failed', err);
+                // Keep the current playback state if it's a transient error, 
+                // or nullify if it's persistent. For now, let's just nullify if not 401.
+                if (err.status >= 500) {
+                   // Transient server error, maybe don't nullify?
+                } else {
+                   setPlayback(null);
+                }
             }
         }
     }, [accessToken, refresh]);

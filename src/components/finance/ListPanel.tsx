@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 interface ListItem {
   id: number;
@@ -10,71 +10,35 @@ interface ListItem {
   amount?: string;
 }
 
-const items: ListItem[] = [
-  {
-    id: 1,
-    title: "Planejamento Financeiro - Dezembro",
-    summary: "Revisão completa do orçamento anual e metas...",
-    tag: "#URGENTE",
-    tagType: "warning",
-    date: "28 Mar",
-    amount: "R$ 2.400,00",
-  },
-  {
-    id: 2,
-    title: "Pagamento Aluguel",
-    summary: "Transferência mensal do aluguel do apartamento...",
-    tag: "#DESPESA",
-    tagType: "warning",
-    date: "25 Mar",
-    amount: "R$ 1.800,00",
-  },
-  {
-    id: 3,
-    title: "Freelance - Projeto App",
-    summary: "Receita do projeto de desenvolvimento mobile...",
-    tag: "#RECEITA",
-    tagType: "primary",
-    date: "22 Mar",
-    amount: "R$ 5.000,00",
-  },
-  {
-    id: 4,
-    title: "Lista de Compras Mensais",
-    summary: "Supermercado, farmácia e produtos de limpeza...",
-    tag: "#NOTA",
-    tagType: "primary",
-    date: "20 Mar",
-  },
-  {
-    id: 5,
-    title: "Investimento Renda Fixa",
-    summary: "Aplicação em CDB 120% CDI no banco...",
-    tag: "#INVESTIMENTO",
-    tagType: "primary",
-    date: "18 Mar",
-    amount: "R$ 3.000,00",
-  },
-];
-
 const filters = ["Todas", "Abertas", "Concluídas"];
 
 interface ListPanelProps {
+  items: ListItem[];
   activeId: number;
   onSelect: (id: number) => void;
+  onCreateClick: () => void;
 }
 
-const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
+const ListPanel = ({ items, activeId, onSelect, onCreateClick }: ListPanelProps) => {
   return (
     <div className="w-80 shrink-0 bg-card rounded-3xl p-5 flex flex-col gap-4 overflow-hidden">
-      {/* Search */}
-      <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Buscar notas e transações..."
-          className="w-full bg-surface-input rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border-none focus:ring-1 focus:ring-primary/50 transition"
-        />
+      {/* Search & Add */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Buscar notas..."
+            className="w-full bg-surface-input rounded-xl pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none border-none focus:ring-1 focus:ring-primary/50 transition"
+          />
+        </div>
+        <button
+          onClick={onCreateClick}
+          className="w-10 h-10 bg-white/5 text-muted-foreground rounded-xl flex items-center justify-center hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shrink-0"
+          title="Criar novo"
+        >
+          <Plus size={18} strokeWidth={2.5} />
+        </button>
       </div>
 
       {/* Filters */}
@@ -101,7 +65,7 @@ const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
               key={item.id}
               onClick={() => onSelect(item.id)}
               className={`text-left p-4 rounded-2xl transition-all ${isActive
-                ? "gradient-active shadow-lg shadow-purple-500/20 scale-[1.02]"
+                ? "gradient-active"
                 : "bg-surface-elevated hover:bg-secondary"
                 }`}
             >
@@ -151,5 +115,4 @@ const ListPanel = ({ activeId, onSelect }: ListPanelProps) => {
 };
 
 export default ListPanel;
-export { items };
 export type { ListItem };
