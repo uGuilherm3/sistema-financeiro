@@ -19,14 +19,14 @@ interface CategoryPanelProps {
 
 // Renderiza o background do card (imagem, gradiente ou default)
 const CardBackground = ({ cat }: { cat: Category }) => {
-  if (cat.isVirtual) {
-    return <div className="absolute inset-0 bg-gradient-to-br from-violet-500/40 via-purple-600/25 to-blue-600/25" />;
-  }
   if (cat.background_url) {
     if (cat.background_url.startsWith("http") || cat.background_url.startsWith("data:")) {
       return <img src={cat.background_url} alt="" className="absolute inset-0 w-full h-full object-cover" />;
     }
     return <div className="absolute inset-0 w-full h-full" style={{ background: cat.background_url }} />;
+  }
+  if (cat.isVirtual) {
+    return <div className="absolute inset-0 bg-gradient-to-br from-violet-500/40 via-purple-600/25 to-blue-600/25" />;
   }
   return <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />;
 };

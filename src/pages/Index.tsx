@@ -614,9 +614,19 @@ const Index = () => {
       try {
         // Se for uma fatura de cartão (virtual)
         if (String(item.id).startsWith('inv_card_')) {
+          const cardId = item.cardId;
+          try {
+            if (cardId) {
+              await supabase.from('cards').update({ current_invoice: 0 }).eq('id', cardId);
+            }
+          } catch (e) {
+            console.error("Erro ao zerar fatura no banco:", e);
+          }
+
           await handleSendComment("Foi pago a fatura do mês?", 'system');
           handleSendComment("Ok! Marcado como pago. Não esqueça de confirmar no app do seu banco! 💳", 'system');
           toast.success("Lembrete de fatura concluído");
+          fetchData();
           return;
         }
 
@@ -1113,7 +1123,7 @@ const Index = () => {
                 items={panelItems}
                 activeId={activeItemId}
                 activeColor={activeCategory?.background_url}
-                onSelect={activeIsVirtual ? undefined : setActiveItemId}
+                onSelect={setActiveItemId}
                 onCreateClick={activeIsVirtual ? undefined : () => {
                   if (!activeCategoryId) {
                     toast.error("Selecione ou crie uma categoria primeiro!");

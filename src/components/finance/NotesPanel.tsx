@@ -340,6 +340,7 @@ const NotesPanel = ({ items, activeId, onSelect, onCreateClick, activeColor }: N
                 activeId={activeId}
                 onToggle={() => toggleGroup(key)}
                 onSelect={onSelect}
+                activeColor={activeColor}
               />
             </div>
           );

@@ -161,7 +161,7 @@ export default function CardsPage({ cards, onAddClick, onEditClick, onDataSync, 
    }, [activeCardId]);
 
    return (
-      <div className="flex gap-4 flex-1 overflow-hidden min-w-0 px-2 h-full">
+      <div className="flex gap-4 flex-1 overflow-hidden min-w-0 pl-2 pr-8 h-full">
          {/* Coluna Esquerda: Cartões (Fileira Vertical) */}
          <div className="w-80 shrink-0 h-full flex flex-col gap-4 bg-black/20 backdrop-blur-xl p-4 rounded-[32px]">
             <div className="flex items-center justify-between px-2 pt-2 pb-1">
@@ -169,7 +169,7 @@ export default function CardsPage({ cards, onAddClick, onEditClick, onDataSync, 
             </div>
 
             <div className="flex-1 w-full overflow-y-auto custom-scrollbar flex flex-col pr-1 pb-4">
-               <button onClick={onAddClick} className="w-full shrink-0 h-[100px] rounded-[24px] bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all gap-2 group outline-none mb-6">
+               <button onClick={onAddClick} className="w-full shrink-0 h-[120px] rounded-[24px] bg-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all gap-2 group outline-none mb-6">
                   <div className="w-10 h-10 rounded-full bg-white/5 group-hover:bg-white/10 flex items-center justify-center transition-colors">
                      <Plus size={20} />
                   </div>
@@ -178,7 +178,7 @@ export default function CardsPage({ cards, onAddClick, onEditClick, onDataSync, 
 
                <div 
                   ref={parent}
-                  className="flex flex-col -space-y-28 pb-12 overflow-visible pr-1 hide-scrollbar pt-6"
+                  className="flex flex-col space-y-[-110px] pb-12 overflow-visible pr-1 hide-scrollbar pt-6"
                >
                   {displayCards.map((card, idx) => {
                      const isGlass = card.color?.includes('backdrop-blur');
@@ -187,13 +187,13 @@ export default function CardsPage({ cards, onAddClick, onEditClick, onDataSync, 
                         <button
                            key={card.id}
                            onClick={() => handleCardSelect(card.id)}
-                           className={`w-full shrink-0 p-5 rounded-[24px] flex flex-col gap-4 text-left ${isActive ? "bg-black/[0.65] scale-[1.02]" : "bg-black/[0.45] opacity-70 hover:opacity-100 hover:bg-black/[0.55]"} relative overflow-hidden group outline-none min-h-[140px] flex justify-between transition-colors duration-500 hover:-translate-y-4 shadow-none`}
+                           className={`w-full shrink-0 p-5 rounded-[24px] flex flex-col gap-4 text-left ${isActive ? "bg-[#131313]" : "bg-[#131313] hover:bg-[#1a1a1a]"} relative overflow-hidden group outline-none min-h-[170px] flex justify-between transition-colors duration-500 hover:-translate-y-4 shadow-none`}
                            style={{
                               zIndex: idx
                            }}
                         >
                            {/* Color Tint Overlay - Masking content behind */}
-                           <div className={`absolute inset-0 ${card.color} ${isGlass ? "opacity-100" : (isActive ? "opacity-30" : "opacity-20")} transition-opacity`} />
+                           <div className={`absolute inset-0 ${card.color} ${isGlass ? "opacity-100" : (isActive ? "opacity-60" : "opacity-40")} transition-opacity`} />
 
                            {/* Glass Surface Glow */}
                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-40" />
