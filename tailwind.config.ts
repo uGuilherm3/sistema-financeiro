@@ -58,6 +58,7 @@ export default {
         },
         success: "hsl(var(--success))",
         danger: "hsl(var(--danger))",
+        black: "#131313",
         sidebar: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--foreground))",

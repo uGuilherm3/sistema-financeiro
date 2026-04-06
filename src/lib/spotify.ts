@@ -3,7 +3,7 @@
  */
 
 const REDIRECT_URI = window.location.origin.replace('localhost', '127.0.0.1') + '/';
-const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state';
+const SCOPES = 'user-read-currently-playing user-read-playback-state user-modify-playback-state streaming user-read-email user-read-private';
 
 // Generate a random string for the Code Verifier
 export const generateCodeVerifier = (length: number) => {
@@ -74,6 +74,11 @@ export const refreshAccessToken = async (clientId: string, refreshToken: string)
     }),
   });
 
+  if (!response.ok) {
+    const error = new Error('Failed to refresh access token');
+    (error as any).status = response.status;
+    throw error;
+  }
   return await response.json();
 };
 
@@ -112,9 +117,21 @@ export const pauseTrack = async (accessToken: string) => {
   });
 };
 
-export const playTrack = async (accessToken: string) => {
-  await fetch('https://api.spotify.com/v1/me/player/play', {
+export const playTrack = async (accessToken: string, deviceId?: string) => {
+  const url = deviceId ? `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}` : 'https://api.spotify.com/v1/me/player/play';
+  await fetch(url, {
     method: 'PUT',
     headers: { Authorization: `Bearer ${accessToken}` },
+  });
+};
+
+export const transferPlayback = async (accessToken: string, deviceId: string) => {
+  await fetch('https://api.spotify.com/v1/me/player', {
+    method: 'PUT',
+    headers: { 
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ device_ids: [deviceId], play: true }),
   });
 };

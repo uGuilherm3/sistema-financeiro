@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Plus, CreditCard, Palette, Calendar } from "lucide-react";
+import { X, Plus, CreditCard, Palette, Calendar, Pencil } from "lucide-react";
 
 interface CardActionPanelProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ const CustomSelect = ({ label, value, options, onChange }: { label: string; valu
         {isOpen && (
           <>
             <div className="fixed inset-0 z-[110]" onClick={() => setIsOpen(false)} />
-            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-black/40 backdrop-blur-3xl rounded-3xl p-2 z-[111] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 outline-none border-none max-h-[220px] overflow-y-auto scrollbar-hide hover:scrollbar-default">
+            <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-background backdrop-blur-3xl rounded-3xl p-2 z-[111] animate-in fade-in zoom-in-95 duration-200 outline-none border-none max-h-[220px] overflow-y-auto scrollbar-hide hover:scrollbar-default">
               {options.map((opt) => (
                 <button
                   key={opt}
@@ -44,8 +44,8 @@ const CustomSelect = ({ label, value, options, onChange }: { label: string; valu
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-4 py-3 rounded-xl text-xs transition-all ${value === opt
-                      ? "bg-white text-black font-bold"
-                      : "text-white/60 hover:bg-white/5 hover:text-white"
+                    ? "bg-white text-black font-bold"
+                    : "text-white/60 hover:bg-white/5 hover:text-white"
                     }`}
                 >
                   {opt}
@@ -90,8 +90,8 @@ const CardActionPanel = ({ isOpen, onClose, onConfirm, initialData }: CardAction
     }
   }, [initialData, isOpen]);
 
-  const handleConfirm = () => {
-    onConfirm({
+  const handleConfirm = async () => {
+    await onConfirm({
       id: initialData?.id || Date.now(),
       bank: bankName,
       type: cardType,
@@ -118,16 +118,16 @@ const CardActionPanel = ({ isOpen, onClose, onConfirm, initialData }: CardAction
     { name: "Nubank", class: "bg-purple-600" },
     { name: "Inter", class: "bg-orange-500" },
     { name: "C6 Bank", class: "bg-zinc-900" },
-    { name: "Bradesco", class: "bg-red-600" },
+    { name: "Glass", class: "bg-white/10 backdrop-blur-2xl" },
     { name: "Santander", class: "bg-red-700" },
     { name: "BB", class: "bg-yellow-500" },
-    { name: "Itaú", class: "bg-orange-600" },
+    { name: "Sicredi", class: "bg-emerald-500" },
     { name: "Caixa", class: "bg-blue-700" },
   ];
 
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
 
-  const usedPercentage = totalLimit && availableLimit 
+  const usedPercentage = totalLimit && availableLimit
     ? Math.max(0, Math.min(100, (1 - (parseFloat(availableLimit) / parseFloat(totalLimit))) * 100))
     : 0;
 
@@ -141,7 +141,7 @@ const CardActionPanel = ({ isOpen, onClose, onConfirm, initialData }: CardAction
 
       {/* Side Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-lg bg-black/40 backdrop-blur-3xl z-[101] shadow-2xl transition-transform duration-500 ease-in-out transform ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-full max-w-lg bg-black/80 backdrop-blur-xl z-[101] transition-transform duration-500 ease-in-out transform ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="h-full flex flex-col p-8 gap-8 overflow-y-auto">
           {/* Header */}
@@ -241,12 +241,12 @@ const CardActionPanel = ({ isOpen, onClose, onConfirm, initialData }: CardAction
                   <button
                     key={color.class}
                     onClick={() => setSelectedColor(color.class)}
-                    className={`h-12 rounded-xl transition-all relative overflow-hidden group ${color.class} ${selectedColor === color.class ? 'scale-[0.9] shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'opacity-60 hover:opacity-100 hover:scale-[1.02]'}`}
+                    className={`h-12 rounded-xl transition-all relative overflow-hidden group ${color.class} ${selectedColor === color.class ? 'scale-[0.9]' : 'opacity-60 hover:opacity-100 hover:scale-[1.02]'}`}
                   >
                     <div className="absolute inset-0 bg-white/5 group-hover:bg-transparent transition-colors" />
                     {selectedColor === color.class && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_white]" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-white" />
                       </div>
                     )}
                   </button>
@@ -256,57 +256,58 @@ const CardActionPanel = ({ isOpen, onClose, onConfirm, initialData }: CardAction
 
             {/* Preview Card */}
             <div className="mt-4 space-y-2">
-               <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Prévia do Cartão</label>
-               <div className={`w-full p-6 rounded-3xl ${selectedColor} relative overflow-hidden shadow-2xl transition-all duration-500 min-h-[160px] flex flex-col justify-between`}>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-8 blur-3xl opacity-50" />
-                  
-                  <div className="flex justify-between items-start relative z-10">
-                    <div className="flex items-center gap-2">
-                      <CreditCard size={18} className="text-white/80" />
-                      <span className="text-[10px] font-bold text-white uppercase tracking-widest">{bankName || "NOME DO BANCO"}</span>
-                    </div>
-                    <div className="w-8 h-5 rounded bg-white/20 backdrop-blur-md" />
+              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Prévia do Cartão</label>
+              <div className={`w-full p-6 rounded-3xl ${selectedColor} relative overflow-hidden transition-all duration-500 min-h-[160px] flex flex-col justify-between`}>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-8 blur-3xl opacity-50" />
+
+                <div className="flex justify-between items-start relative z-10">
+                  <div className="flex items-center gap-2">
+                    <CreditCard size={18} className="text-white/80" />
+                    <span className="text-[10px] font-bold text-white uppercase tracking-widest">{bankName || "NOME DO BANCO"}</span>
+                  </div>
+                  <div className="w-8 h-5 rounded bg-white/20 backdrop-blur-md" />
+                </div>
+
+                <div className="relative z-10 space-y-4">
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] text-white/60 font-medium">{cardType}</p>
+                    <p className="text-xl font-bold text-white tracking-widest">•••• {lastDigits || "0000"}</p>
                   </div>
 
-                  <div className="relative z-10 space-y-4">
-                    <div className="space-y-0.5">
-                      <p className="text-[10px] text-white/60 font-medium">{cardType}</p>
-                      <p className="text-xl font-bold text-white tracking-widest">•••• {lastDigits || "0000"}</p>
-                    </div>
-
-                    {totalLimit && (
-                      <div className="space-y-1.5 opacity-80">
-                        <div className="flex justify-between text-[10px] font-bold text-white uppercase tracking-tight">
-                          <span>Disponível</span>
-                          <span>R$ {parseFloat(availableLimit || "0").toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                        </div>
-                        <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-white rounded-full transition-all duration-500 ease-out" 
-                            style={{ width: `${100 - usedPercentage}%` }}
-                          />
-                        </div>
+                  {totalLimit && (
+                    <div className="space-y-1.5 opacity-80">
+                      <div className="flex justify-between text-[10px] font-bold text-white uppercase tracking-tight">
+                        <span>Disponível</span>
+                        <span>R$ {parseFloat(availableLimit || "0").toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
-                    )}
-                  </div>
-               </div>
+                      <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-white rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${100 - usedPercentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Bottom Actions */}
           <div className="flex gap-4 shrink-0 mt-auto">
-            <button 
+            <button
               onClick={handleClear}
-              className="flex-1 py-5 rounded-2xl bg-white/10 backdrop-blur-3xl text-white font-bold text-[10px] hover:bg-white/20 transition-all active:scale-[0.98] shadow-2xl shadow-black/20 uppercase tracking-widest flex items-center justify-center gap-2"
+              className="flex-1 py-5 rounded-2xl bg-white/5 backdrop-blur-xl text-white font-bold text-[10px] hover:bg-white/20 transition-all active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2"
+
             >
               Limpar
             </button>
-            <button 
+            <button
               onClick={handleConfirm}
-              className="flex-[2] py-5 rounded-2xl bg-white text-black font-bold text-[10px] hover:bg-white/90 transition-all active:scale-[0.98] shadow-2xl shadow-white/5 uppercase tracking-widest flex items-center justify-center gap-2"
+              className="flex-[2] py-5 rounded-2xl bg-white text-black font-bold text-[10px] hover:bg-white/90 transition-all active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2"
             >
-              <Plus size={18} />
-              Confirmar Adição
+              {initialData ? <Pencil size={18} /> : <Plus size={18} />}
+              {initialData ? "Confirmar Atualização" : "Confirmar Adição"}
             </button>
           </div>
         </div>

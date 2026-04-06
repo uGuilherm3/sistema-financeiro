@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ListTodo, StickyNote, DollarSign, X, ChevronDown, Plus, Wallet, CreditCard, ShoppingBag, Trash2 } from "lucide-react";
+import { ListTodo, TrendingUp, X, ChevronDown, Plus, ShoppingBag, Trash2, DollarSign, Wallet, CreditCard, StickyNote } from "lucide-react";
 
 interface ActionPanelProps {
   isOpen: boolean;
@@ -12,8 +12,8 @@ interface ActionPanelProps {
 
 const tabs = [
   { label: "Tarefa", icon: ListTodo },
-  { label: "Nota", icon: StickyNote },
-  { label: "Gasto", icon: DollarSign },
+  { label: "Ganho", icon: TrendingUp },
+  { label: "Gasto", icon: ShoppingBag },
 ];
 
 const availableIcons = [StickyNote, ListTodo, DollarSign, Wallet, CreditCard, ShoppingBag];
@@ -43,7 +43,7 @@ const CustomSelect = ({ label, value, options, onChange }: CustomSelectProps) =>
       {isOpen && (
         <>
           <div className="fixed inset-0 z-[110]" onClick={() => setIsOpen(false)} />
-          <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-black/40 backdrop-blur-3xl rounded-3xl p-2 z-[111] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 outline-none border-none max-h-[220px] overflow-y-auto scrollbar-hide hover:scrollbar-default">
+          <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-background backdrop-blur-3xl rounded-3xl p-2 z-[111] animate-in fade-in zoom-in-95 duration-200 outline-none border-none max-h-[220px] overflow-y-auto scrollbar-hide hover:scrollbar-default">
             {options.map((opt) => (
               <button
                 key={opt}
@@ -113,7 +113,7 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
 
       {/* Side Drawer - Glassmorphism style */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-lg bg-black/40 backdrop-blur-3xl z-[101] shadow-2xl transition-transform duration-500 ease-in-out transform ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-full max-w-lg bg-black/80 backdrop-blur-xl z-[101] transition-transform duration-500 ease-in-out transform ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="h-full flex flex-col p-8 gap-8 overflow-y-auto">
           {/* Header */}
@@ -164,7 +164,7 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
                     key={idx}
                     onClick={() => setSelectedIconIdx(idx)}
                     className={`w-11 h-11 rounded-md flex items-center justify-center transition-all ${selectedIconIdx === idx
-                      ? "bg-white text-black shadow-xl scale-[1.05]"
+                      ? "bg-white text-black scale-[1.05]"
                       : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
                       }`}
                   >
@@ -242,6 +242,24 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
               </div>
             )}
 
+            {activeTab === "Ganho" && (
+              <div className="animate-in fade-in duration-300">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#4ade80]/70 ml-1">Valor Recebido (R$)</label>
+                  <div className="relative">
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[#4ade80]/50 text-xs font-bold">+</span>
+                    <input
+                      type="text"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0,00"
+                      className="w-full bg-[#4ade80]/5 border-none rounded-2xl pl-9 pr-5 py-4 text-xs text-[#4ade80] placeholder:text-[#4ade80]/20 outline-none transition-all focus:bg-[#4ade80]/10"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Descrição</label>
               <textarea
@@ -262,7 +280,7 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
                   onDelete?.();
                   onClose();
                 }}
-                className="w-14 h-14 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shrink-0 shadow-lg shadow-red-500/10"
+                className="w-14 h-14 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shrink-0"
                 title="Excluir item"
               >
                 <Trash2 size={20} />
@@ -270,11 +288,12 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
             )}
             <button
               onClick={onClose}
-              className="flex-1 py-5 rounded-2xl bg-white/10 backdrop-blur-3xl text-white font-bold text-[10px] hover:bg-white/20 transition-all active:scale-[0.98] shadow-2xl shadow-black/20 uppercase tracking-widest flex items-center justify-center font-bold"
+              className="flex-1 py-5 rounded-2xl bg-white/5 backdrop-blur-xl text-white font-bold text-[10px] hover:bg-white/20 transition-all active:scale-[0.98] uppercase tracking-widest flex items-center justify-center font-bold"
+
             >
               Cancelar
             </button>
-            <button 
+            <button
               onClick={() => {
                 onConfirm?.({
                   title,
@@ -283,15 +302,15 @@ const ActionPanel = ({ isOpen, onClose, isEdit, initialData, onDelete, onConfirm
                   status,
                   priority,
                   category,
-                  amount: activeTab === "Gasto" ? parseFloat(amount.toString().replace(',', '.')) || 0 : 0,
+                  amount: (activeTab === "Gasto" || activeTab === "Ganho") ? parseFloat(amount.toString().replace(',', '.')) || 0 : 0,
                   due_date: date,
                   installments: activeTab === "Gasto" ? installments : null
                 });
                 onClose();
               }}
-              className="flex-[1.5] py-5 rounded-2xl bg-white text-black font-bold text-[10px] hover:bg-white/90 transition-all active:scale-[0.98] shadow-2xl shadow-white/5 uppercase tracking-widest flex items-center justify-center gap-2"
+              className="flex-[1.5] py-5 rounded-2xl bg-white text-black font-bold text-[10px] hover:bg-white/90 transition-all active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2"
             >
-              {isEdit ? "Salvar" : <Plus size={18} />}
+              {!isEdit && <Plus size={18} />}
               {isEdit ? "Atualizar" : `Salvar ${activeTab}`}
             </button>
           </div>

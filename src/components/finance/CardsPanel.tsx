@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { CreditCard, MoreVertical, Plus, Pencil, Trash2 } from "lucide-react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface Card {
     id: number;
@@ -7,18 +8,21 @@ interface Card {
     type: string;
     lastDigits: string;
     color: string;
+    totalLimit?: string;
+    availableLimit?: string;
+    dueDay?: string;
 }
-
-const cards: Card[] = [
-    { id: 1, bank: "Nubank", type: "Crédito", lastDigits: "4582", color: "bg-purple-600" },
-    { id: 2, bank: "Inter", type: "Débito", lastDigits: "9021", color: "bg-orange-500" },
-];
 
 interface CardsPanelProps {
     onAddClick: () => void;
     onEditClick: (card: Card) => void;
     onDeleteClick: (id: number) => void;
     cards: Card[];
+    salary: number;
+    salaryDay?: number;
+    totalLimits: number;
+    totalExpenses: number;
+    totalGanhos?: number;
 }
 
 const CardMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) => {
@@ -37,7 +41,7 @@ const CardMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => vo
 
     return (
         <div className="relative" ref={menuRef}>
-            <button 
+            <button
                 onClick={(e) => {
                     e.stopPropagation();
                     setIsOpen(!isOpen);
@@ -48,8 +52,8 @@ const CardMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => vo
             </button>
 
             {isOpen && (
-                <div className="absolute top-1/2 right-full mr-2 -translate-y-1/2 w-40 bg-black/80 backdrop-blur-3xl rounded-2xl p-1 z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-right-2 duration-300">
-                    <button 
+                <div className="absolute top-1/2 right-full mr-2 -translate-y-1/2 w-40 bg-black/80 backdrop-blur-xl rounded-2xl p-1 z-[100] animate-in fade-in slide-in-from-right-2 duration-300">
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             onEdit();
@@ -60,7 +64,7 @@ const CardMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => vo
                         <Pencil size={12} />
                         Editar
                     </button>
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             onDelete();
@@ -77,58 +81,161 @@ const CardMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => vo
     );
 };
 
-const CardsPanel = ({ onAddClick, onEditClick, onDeleteClick, cards }: CardsPanelProps) => {
+const CardsPanel = ({
+    onAddClick,
+    onEditClick,
+    onDeleteClick,
+    cards,
+    salary,
+    totalLimits,
+    totalExpenses,
+    totalGanhos = 0,
+}: CardsPanelProps) => {
+    const [displayCards, setDisplayCards] = useState(cards);
+    const [parent] = useAutoAnimate();
+
+    // Sincroniza apenas quando a lista de IDs de cartões muda (adição/exclusão)
+    // Evita resetar a rotação do usuário em re-renders simples do pai
+    useEffect(() => {
+        const currentIds = displayCards.map(c => c.id).sort().join(',');
+        const propIds = cards.map(c => c.id).sort().join(',');
+        
+        if (currentIds !== propIds || displayCards.length !== cards.length) {
+            const savedId = localStorage.getItem('preferred_card_id');
+            if (savedId) {
+                const index = cards.findIndex(c => c.id === savedId);
+                if (index !== -1) {
+                    const reordered = [...cards.slice(0, index), ...cards.slice(index + 1), cards[index]];
+                    setDisplayCards(reordered);
+                    return;
+                }
+            }
+            setDisplayCards(cards);
+        }
+    }, [cards]);
+
+    const handleCardClick = (cardId: string | number) => {
+        const index = displayCards.findIndex(c => c.id === cardId);
+        if (index === -1) return;
+        
+        // Circular shuffle: o clicado vai para o fim (frente da pilha)
+        const newOrder = [...displayCards.slice(0, index), ...displayCards.slice(index + 1), displayCards[index]];
+        setDisplayCards(newOrder);
+        
+        // Salva a preferência
+        localStorage.setItem('preferred_card_id', String(cardId));
+    };
+
+    const remainingBalance = salary + totalGanhos - totalExpenses;
+
     return (
         <div className="flex-1 glass-panel rounded-3xl p-5 flex flex-col gap-5 overflow-hidden">
             <div className="flex items-center justify-between">
                 <h2 className="text-sm font-bold text-foreground">Meus cartões</h2>
-                <button 
-                  onClick={onAddClick}
-                  className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground transition-all"
+                <button
+                    onClick={onAddClick}
+                    className="p-1.5 rounded-lg hover:bg-white/5 text-muted-foreground transition-all"
                 >
                     <Plus size={16} />
                 </button>
             </div>
 
-            <div className="flex flex-col gap-3 overflow-y-auto pr-1 overflow-x-visible">
-                {cards.map((card) => (
-                    <div 
-                        key={card.id} 
-                        className={`relative p-6 rounded-2xl cursor-grab active:cursor-grabbing transition-all active:scale-[0.98] shadow-lg group min-h-[140px] flex flex-col justify-between`}
+            <div 
+                ref={parent}
+                className="flex-1 flex flex-col -space-y-28 overflow-visible pr-1 group/stack pt-4 min-h-[300px]"
+            >
+                {displayCards.map((card, index) => {
+                    const isGlass = card.color?.includes('backdrop-blur');
+                    return (
+                    <div
+                        key={card.id}
+                        onClick={() => handleCardClick(card.id)}
+                        className={`relative p-6 rounded-2xl cursor-pointer group transition-colors duration-500 
+                                   min-h-[160px] flex flex-col justify-between overflow-hidden hover:-translate-y-4 shadow-none`}
+                        style={{
+                            zIndex: index,
+                            marginTop: index === 0 ? '0' : undefined
+                        }}
                     >
-                        {/* Background Layer (Clips correctly) */}
-                        <div className={`absolute inset-0 rounded-2xl ${card.color} overflow-hidden`}>
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-8 blur-2xl" />
+                        {/* Background Layer */}
+                        <div
+                            className={`absolute inset-0 rounded-2xl ${card.color} ${isGlass ? '' : 'opacity-100'} transition-all overflow-hidden`}
+                            style={isGlass ? { backdropFilter: 'blur(32px)', WebkitBackdropFilter: 'blur(32px)' } : {}}
+                        >
+                            {/* Reflexos sutis para dar profundidade mesmo em cores sólidas */}
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-white/15 rounded-full -translate-y-12 translate-x-8 blur-2xl opacity-20" />
+                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/5 rounded-full translate-y-16 -translate-x-12 blur-3xl opacity-10" />
                         </div>
-                        
+
                         <div className="flex items-start justify-between relative z-10 w-full mb-4">
                             <div className="flex items-center gap-2">
-                                <CreditCard size={16} className="text-white/80" />
-                                <span className="text-[10px] font-bold text-white/90 uppercase tracking-widest">{card.bank}</span>
+                                <CreditCard size={14} className="text-white/80" />
+                                <span className="text-[9px] font-black text-white/90 uppercase tracking-[0.2em]">{card.bank}</span>
                             </div>
-                            <CardMenu 
-                                onEdit={() => onEditClick(card)} 
-                                onDelete={() => onDeleteClick(card.id)} 
+                            <CardMenu
+                                onEdit={() => onEditClick(card)}
+                                onDelete={() => onDeleteClick(card.id)}
                             />
                         </div>
 
-                        <div className="relative z-10 space-y-0.5">
-                            <p className="text-xs text-white/60 font-medium">{card.type}</p>
-                            <p className="text-lg font-bold text-white tracking-widest leading-none">•••• {card.lastDigits}</p>
+                        <div className="relative z-10 space-y-1">
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <p className="text-[10px] text-white/60 font-bold uppercase tracking-wider">{card.type}</p>
+                                    <p className="text-xl font-bold text-white tracking-[0.1em] leading-none">•••• {card.lastDigits}</p>
+                                </div>
+                                {card.availableLimit && (
+                                    <div className="text-right">
+                                        <p className="text-[8px] text-white/40 uppercase font-black tracking-widest">Disp.</p>
+                                        <p className="text-sm font-bold text-white">R$ {parseFloat(card.availableLimit).toLocaleString('pt-BR')}</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {card.availableLimit && card.totalLimit && (
+                                <div className="mt-2 w-full h-1 bg-black/20 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-700 ease-in-out ${(parseFloat(card.availableLimit) / parseFloat(card.totalLimit)) < 0.1 ? 'bg-red-400' : 'bg-white/60'
+                                            }`}
+                                        style={{ width: `${(parseFloat(card.availableLimit) / parseFloat(card.totalLimit)) * 100}%` }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
-                ))}
+                    );
+                })}
+            </div>
 
-                {/* Add New Card Placeholder */}
-                <button 
-                  onClick={onAddClick}
-                  className="w-full h-24 rounded-2xl bg-white/5 flex items-center justify-center gap-2 text-muted-foreground hover:text-white hover:bg-white/10 transition-all group p-4"
-                >
-                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary transition-colors">
-                        <Plus size={14} className="group-hover:text-white" />
+            {/* Resumo Financeiro na Base */}
+            <div className="mt-auto rounded-2xl bg-surface-elevated p-4">
+                <div className="flex items-end justify-between mb-3">
+                    <div>
+                        <p className="text-xs text-muted-foreground mb-2">Saldo do Mês</p>
+                        <p className={`text-xl font-bold ${remainingBalance >= 0 ? 'text-foreground' : 'text-red-400'}`}>
+                            R$ {remainingBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </p>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Adicionar Cartão</span>
-                </button>
+                    <div className="text-right pb-0.5">
+                        <p className="text-xs text-muted-foreground mb-1">Limites</p>
+                        <p className="text-sm font-medium text-success">+ R$ {totalLimits.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</p>
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-end">
+                    <div>
+                        {totalGanhos > 0 && (
+                            <div>
+                                <p className="text-xs text-muted-foreground mb-1">Ganhos</p>
+                                <p className="text-sm font-medium text-[#4ade80]">+ R$ {totalGanhos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs text-muted-foreground mb-1">Despesas</p>
+                        <p className="text-sm font-medium text-danger">- R$ {totalExpenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
